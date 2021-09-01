@@ -54,6 +54,30 @@ def main(opt):
     trainer = Trainer(opt, model, optimizer)
     trainer.set_device(opt.gpus, opt.chunk_sizes, opt.device)
 
+    print("Setting up data...")
+    val_loader = torch.utils.data.DataLoader(
+        Dataset(opt, 'val'),
+        batch_size=1,
+        shuffle=False,
+        num_workers=1,
+        pin_memory=True
+    )
+
+    if opt.test:
+        _, preds = trainer.val(0, val_loader)
+        # run evaluation code
+        val_loader.dataset.run_eval(preds, opt.save_dir)
+        return
+
+    train_loader = torch.utils.data.DataLoader(
+        Dataset(opt, 'train'),
+        batch_size=opt.batch_size,
+        shuffle=True,
+        num_workers=opt.num_workers,
+        pin_memory=True,
+        drop_last=True
+    )
+
 if __name__ == '__main__':
     __init_path()
     print(sys.path)
