@@ -10,10 +10,10 @@ class binarySegLoss(torch.nn.Module):
     def __init__(self, opt):
         super(binarySegLoss, self).__init__()
         self.crit = dice_bce_loss()
+        self.opt = opt
 
     def forward(self, outputs, batch):
 
-        opt = self.opt
         loss = self.crit(outputs, batch['gt'])
 
         loss_stats = {'loss': loss}
