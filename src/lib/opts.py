@@ -42,6 +42,11 @@ class opts(object):
         # data_root
         self.parser.add_argument('--data_root', default='/data/zaiwang/Dataset',
                                  help='which model')
+
+        # loss type
+        self.parser.add_argument('--loss_type', default='dice_bce_loss',
+                                 help='which loss type')
+
         # system
         self.parser.add_argument('--gpus', default='3',
                                  help='-1 for CPU, use comma for multiple gpus')
@@ -175,7 +180,8 @@ class opts(object):
         # opt.root_dir = os.path.join(os.path.dirname(__file__), '..', '..')
         # opt.data_dir = os.path.join(opt.root_dir, 'data')
         opt.data_dir = os.path.join(opt.data_root, opt.dataset)
-        opt.exp_dir = os.path.join(opt.root_dir, 'exp', opt.task)
+        opt.exp_dir = os.path.join(opt.root_dir, 'UBT_Seg', opt.task)
+        opt.exp_id = opt.dataset + '_' + opt.model_name + '_' + opt.loss_type
         opt.save_dir = os.path.join(opt.exp_dir, opt.exp_id)
         opt.debug_dir = os.path.join(opt.save_dir, 'debug')
         print('The output will be saved to ', opt.save_dir)

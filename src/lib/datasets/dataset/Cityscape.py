@@ -1,5 +1,4 @@
 # *coding:utf-8 *
-
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -10,14 +9,14 @@ import os
 
 import torch.utils.data as data
 
-
-class ORIGA_OD(data.Dataset):
+class Cityscape(data.Dataset):
     num_classes = 1
     default_resolution = [448, 448]
     mean = np.array([0.40789654, 0.44719302, 0.47026115],
                     dtype=np.float32).reshape(1, 1, 3)
     std = np.array([0.28863828, 0.27408164, 0.27809835],
                    dtype=np.float32).reshape(1, 1, 3)
+
     def __init__(self, opt, split):
         self.images = []
         self.labels = []

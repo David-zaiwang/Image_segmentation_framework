@@ -11,7 +11,7 @@ import os
 import torch.utils.data as data
 
 
-class ORIGA_OD(data.Dataset):
+class HumanSeg(data.Dataset):
     num_classes = 1
     default_resolution = [448, 448]
     mean = np.array([0.40789654, 0.44719302, 0.47026115],
@@ -24,18 +24,17 @@ class ORIGA_OD(data.Dataset):
         self.opt = opt
 
         if split == 'train':
-            read_files = os.path.join(opt.data_dir, 'Set_A.txt')
+            self.image_root_folder = os.path.join(opt.data_dir,'test', 'imgs')
+            self.gt_root_folder = os.path.join(opt.data_dir,'test', 'masks')
         else:
-            read_files = os.path.join(opt.data_dir, 'Set_B.txt')
+            self.image_root_folder = os.path.join(opt.data_dir, 'val', 'imgs')
+            self.gt_root_folder = os.path.join(opt.data_dir, 'val', 'masks')
 
-        self.image_root_folder = os.path.join(opt.data_dir, 'crop_image')
-        self.gt_root_folder = os.path.join(opt.data_dir, 'crop_mask')
+        self._read_img_mask(self.image_root_folder, self.gt_root_folder)
 
-        self._read_img_mask(self.image_root_folder, self.gt_root_folder, read_files)
-
-    def _read_img_mask(self, image_folder, mask_folder, read_files):
-        for img_name in open(read_files):
-            image_path = os.path.join(image_folder, img_name.split('.')[0] + '.jpg')
+    def _read_img_mask(self, image_folder, mask_folder):
+        for img_name in os.listdir(image_folder):
+            image_path = os.path.join(image_folder, img_name.split('.')[0] + '.png')
             label_path = os.path.join(mask_folder, img_name.split('.')[0] + '.png')
 
             self.images.append(image_path)
