@@ -3,9 +3,10 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import sys
-
 from _init_paths import __init_path
+__init_path()
+
+import os
 
 import torch
 import torch.utils
@@ -120,5 +121,5 @@ def main(opt):
 
 
 if __name__ == '__main__':
-    __init_path()
-    print(sys.path)
+    opt = opts().parse()
+    main(opt)

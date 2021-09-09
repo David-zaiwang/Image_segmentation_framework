@@ -14,7 +14,7 @@ class binarySegLoss(torch.nn.Module):
 
     def forward(self, outputs, batch):
 
-        loss = self.crit(outputs, batch['gt'])
+        loss = self.crit(batch['gt'], outputs)
 
         loss_stats = {'loss': loss}
 

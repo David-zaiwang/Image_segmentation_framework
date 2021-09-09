@@ -25,6 +25,7 @@ class BinarySegDataset(data.Dataset):
         img = cv2.resize(img, (self.opt.height, self.opt.width))
 
         mask = np.array(Image.open(self.labels[index]))
+        mask = cv2.resize(mask, (self.opt.height, self.opt.width))
 
         # Data augmentation
         img = randomHueSaturationValue(img,
@@ -50,6 +51,5 @@ class BinarySegDataset(data.Dataset):
         img = torch.Tensor(img)
         mask = torch.Tensor(mask)
 
-        return img, mask
-
-
+        ret = {'input': img, 'gt': mask}
+        return ret
