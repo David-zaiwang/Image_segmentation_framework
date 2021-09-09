@@ -7,10 +7,7 @@ import torch.nn.functional as F
 
 from functools import partial
 
-import Constants
-
 nonlinearity = partial(F.relu, inplace=True)
-
 
 class DACblock(nn.Module):
     def __init__(self, channel):
@@ -225,7 +222,7 @@ class CE_Net_(nn.Module):
         out = self.finalrelu2(out)
         out = self.finalconv3(out)
 
-        return F.sigmoid(out)
+        return torch.sigmoid(out)
 
 
 class CE_Net_backbone_DAC_without_atrous(nn.Module):
@@ -284,7 +281,7 @@ class CE_Net_backbone_DAC_without_atrous(nn.Module):
         out = self.finalrelu2(out)
         out = self.finalconv3(out)
 
-        return F.sigmoid(out)
+        return torch.sigmoid(out)
 
 class CE_Net_backbone_DAC_with_inception(nn.Module):
     def __init__(self, num_classes=1, num_channels=3):
@@ -342,7 +339,7 @@ class CE_Net_backbone_DAC_with_inception(nn.Module):
         out = self.finalrelu2(out)
         out = self.finalconv3(out)
 
-        return F.sigmoid(out)
+        return torch.sigmoid(out)
 
 class CE_Net_backbone_inception_blocks(nn.Module):
     def __init__(self, num_classes=1, num_channels=3):
@@ -400,7 +397,7 @@ class CE_Net_backbone_inception_blocks(nn.Module):
         out = self.finalrelu2(out)
         out = self.finalconv3(out)
 
-        return F.sigmoid(out)
+        return torch.sigmoid(out)
 
 
 class CE_Net_OCT(nn.Module):
@@ -560,4 +557,4 @@ class UNet(nn.Module):
         x = self.up4(x, x1)
         x = self.outc(x)
         #x = self.relu(x)
-        return F.sigmoid(x)
+        return torch.sigmoid(x)
