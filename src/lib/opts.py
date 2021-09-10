@@ -105,37 +105,25 @@ class opts(object):
                                  help='flip data augmentation.')
         self.parser.add_argument('--test_scales', type=str, default='1',
                                  help='multi scale test augmentation.')
-        self.parser.add_argument('--nms', action='store_true',
-                                 help='run nms in testing.')
-        self.parser.add_argument('--K', type=int, default=100,
-                                 help='max number of output objects.')
-        self.parser.add_argument('--not_prefetch_test', action='store_true',
-                                 help='not use parallal data pre-processing.')
-        self.parser.add_argument('--fix_res', action='store_true',
-                                 help='fix testing resolution or keep '
-                                      'the original resolution')
-        self.parser.add_argument('--keep_res', action='store_true',
-                                 help='keep the original resolution'
-                                      ' during validation.')
 
-        # dataset
-        self.parser.add_argument('--not_rand_crop', action='store_true',
-                                 help='not use the random crop data augmentation'
-                                      'from CornerNet.')
-        self.parser.add_argument('--shift', type=float, default=0.1,
+        # dataset augmentation
+        self.parser.add_argument('--color_aug', default=True,
+                                 help='HSV color augmentation')
+
+        self.parser.add_argument('--shift_scale', default=True,
                                  help='when not using random crop'
                                       'apply shift augmentation.')
-        self.parser.add_argument('--scale', type=float, default=0.4,
-                                 help='when not using random crop'
-                                      'apply scale augmentation.')
-        self.parser.add_argument('--rotate', type=float, default=0,
+
+        self.parser.add_argument('--HorizontalFlip', default=True,
+                                 help='Horizontal Flip')
+
+        self.parser.add_argument('--VerticleFlip', default=True,
+                                 help='Verticle Flip')
+
+        self.parser.add_argument('--rotate_90', default=True,
                                  help='when not using random crop'
                                       'apply rotation augmentation.')
-        self.parser.add_argument('--flip', type=float, default=0.5,
-                                 help='probability of applying flip augmentation.')
-        self.parser.add_argument('--no_color_aug', action='store_true',
-                                 help='not use the color augmenation '
-                                      'from CornerNet')
+
 
         # loss
         self.parser.add_argument('--mse_loss', action='store_true',
@@ -153,9 +141,6 @@ class opts(object):
         opt.gpus = [i for i in range(len(opt.gpus))] if opt.gpus[0] >= 0 else [-1]
         opt.lr_step = [int(i) for i in opt.lr_step.split(',')]
         opt.test_scales = [float(i) for i in opt.test_scales.split(',')]
-
-        opt.fix_res = not opt.keep_res
-        print('Fix size testing.' if opt.fix_res else 'Keep resolution testing.')
 
         if opt.trainval:
             opt.val_intervals = 100000000
@@ -177,8 +162,6 @@ class opts(object):
             opt.chunk_sizes.append(slave_chunk_size)
         print('training chunk_sizes:', opt.chunk_sizes)
 
-        # opt.root_dir = os.path.join(os.path.dirname(__file__), '..', '..')
-        # opt.data_dir = os.path.join(opt.root_dir, 'data')
         opt.data_dir = os.path.join(opt.data_root, opt.dataset)
         opt.exp_dir = os.path.join(opt.root_dir, 'UBT_Seg', opt.task)
         opt.exp_id = opt.dataset + '_' + opt.model_name + '_' + opt.loss_type
