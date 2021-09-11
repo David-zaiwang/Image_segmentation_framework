@@ -86,7 +86,7 @@ class opts(object):
                                  help='drop learning rate by 10.')
         self.parser.add_argument('--num_epochs', type=int, default=140,
                                  help='total training epochs.')
-        self.parser.add_argument('--batch_size', type=int, default=12,
+        self.parser.add_argument('--batch_size', type=int, default=24,
                                  help='batch size')
         self.parser.add_argument('--master_batch_size', type=int, default=-1,
                                  help='batch size on the master gpu.')
@@ -94,17 +94,9 @@ class opts(object):
                                  help='default: #samples / batch_size.')
         self.parser.add_argument('--val_intervals', type=int, default=5,
                                  help='number of epochs to run validation.')
-        self.parser.add_argument('--trainval', action='store_true',
-                                 help='include validation in training and '
-                                      'test on test set')
+
         self.parser.add_argument('--root_dir', type=str, default='/data/zaiwang/output',
                                  help='the path to save training model and loggers')
-
-        # test
-        self.parser.add_argument('--flip_test', action='store_true',
-                                 help='flip data augmentation.')
-        self.parser.add_argument('--test_scales', type=str, default='1',
-                                 help='multi scale test augmentation.')
 
         # dataset augmentation
         self.parser.add_argument('--color_aug', default=True,
@@ -124,12 +116,6 @@ class opts(object):
                                  help='when not using random crop'
                                       'apply rotation augmentation.')
 
-
-        # loss
-        self.parser.add_argument('--mse_loss', action='store_true',
-                                 help='use mse loss or focal loss to train '
-                                      'keypoint heatmaps.')
-
     def parse(self, args=''):
         if args == '':
             opt = self.parser.parse_args()
@@ -139,11 +125,9 @@ class opts(object):
         opt.gpus_str = opt.gpus
         opt.gpus = [int(gpu) for gpu in opt.gpus.split(',')]
         opt.gpus = [i for i in range(len(opt.gpus))] if opt.gpus[0] >= 0 else [-1]
-        opt.lr_step = [int(i) for i in opt.lr_step.split(',')]
-        opt.test_scales = [float(i) for i in opt.test_scales.split(',')]
+        print("GPUS device is {}".format(opt.gpus))
 
-        if opt.trainval:
-            opt.val_intervals = 100000000
+        opt.lr_step = [int(i) for i in opt.lr_step.split(',')]
 
         if opt.debug > 0:
             opt.num_workers = 0
@@ -177,24 +161,9 @@ class opts(object):
 
     def update_dataset_info_and_set_heads(self, opt, dataset):
         opt.height, opt.width = dataset.default_resolution
-        input_h, input_w = dataset.default_resolution
         opt.mean, opt.std = dataset.mean, dataset.std
         opt.num_classes = dataset.num_classes
 
-        # input_h(w): opt.input_h overrides opt.input_res overrides dataset default
-        input_h = opt.input_res if opt.input_res > 0 else input_h
-        input_w = opt.input_res if opt.input_res > 0 else input_w
-        opt.input_h = opt.input_h if opt.input_h > 0 else input_h
-        opt.input_w = opt.input_w if opt.input_w > 0 else input_w
-
-        if opt.task == 'binSeg':
-            # assert opt.dataset in ['coco']
-            num_hm = 1
-            opt.heads = {'hm_t': num_hm, 'hm_l': num_hm,
-                         'hm_b': num_hm, 'hm_r': num_hm,
-                         'hm_c': opt.num_classes}
-        else:
-            assert 0, 'task not defined!'
         return opt
 
     def init(self, args=''):

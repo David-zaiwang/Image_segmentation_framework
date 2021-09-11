@@ -31,6 +31,8 @@ class BaseTrainer(object):
         self.loss_stats, self.loss = self._get_losses(opt)
         self.model_with_loss = ModelWithLoss(model, self.loss)
 
+    # 2021-09-11
+    # DataParallel() function: device_ids=gpus (从0开始),适用于单机多卡
     def set_device(self, gpus, chunk_sizes, device):
         if len(gpus) > 1:
             self.model_with_loss = DataParallel(
